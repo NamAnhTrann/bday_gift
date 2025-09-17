@@ -1,0 +1,29 @@
+<section class="relative w-screen h-[100dvh] bg-sky-50 overflow-hidden">
+  <!-- Fullscreen canvas -->
+  <canvas #canvas class="absolute inset-0 w-full h-full"></canvas>
+
+  <!-- HUD -->
+  <div class="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 flex items-center gap-4 text-sm text-sky-800">
+    <div class="px-2 py-1 rounded bg-white/80 border border-sky-200 shadow-sm">
+      Score: <span class="font-semibold">{{ score() }}</span>
+    </div>
+    @if (combo() > 1) {
+      <div class="px-2 py-1 rounded bg-sky-200/90 text-sky-900 border border-sky-300 shadow-sm">
+        Combo x{{ combo() }}
+      </div>
+    }
+  </div>
+
+  <!-- Toast on pop -->
+  @if (toastVisible()) {
+    <div class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-6
+                px-3 py-2 rounded-lg bg-sky-600 text-white text-sm shadow">
+      {{ toastText() }}
+    </div>
+  }
+
+  <!-- Tiny tip -->
+  <div class="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 text-[11px] text-sky-700/70">
+    Pop quickly to build a combo. Golden balloons give extra sparkles ✨
+  </div>
+</section>

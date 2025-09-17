@@ -1,0 +1,106 @@
+<!-- HERO -->
+<section class="relative min-h-[95vh] flex items-center justify-center bg-gradient-to-b from-sky-50 to-white overflow-hidden">
+  <!-- soft floating balloons (pure CSS) -->
+  <div class="balloon balloon-a"></div>
+  <div class="balloon balloon-b"></div>
+  <div class="balloon balloon-c"></div>
+
+  <div class="relative z-10 text-center max-w-2xl px-6">
+    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-sky-700">
+      test <span class="text-sky-500">test</span> 
+    </h1>
+    <p class="mt-4 text-gray-600">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sit amet urna in justo congue egestas.
+    </p>
+
+    <button (click)="scrollTo('#message')" class="mt-10 group relative inline-flex items-center justify-center overflow-hidden border border-sky-300 px-6 py-3 rounded-xl">
+      <span class="absolute inset-y-0 left-0 w-0 bg-sky-500 transition-all duration-300 ease-out group-hover:w-full"></span>
+      <span class="relative text-sm font-medium text-sky-700 group-hover:text-white">CLICK !</span>
+    </button>
+  </div>
+</section>
+
+<!-- MESSAGE -->
+<section id="message" class="bg-white">
+  <div class="max-w-4xl mx-auto px-6 py-16">
+    <h2 class="text-2xl text-center font-semibold text-sky-700">A little note</h2>
+    <p class=" text-center mt-4 leading-7 text-gray-700">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce facilisis vel justo ac viverra. Proin vel augue metus. Aliquam erat volutpat. Integer dignissim nisl nec bibendum convallis.
+    </p>
+<div class="mt-8 grid sm:grid-cols-2 gap-6">
+  <!-- Card 1 -->
+  <div 
+    class="p-5 rounded-2xl border border-sky-100 bg-sky-50/60 shadow-sm cursor-pointer transition duration-300 hover:shadow-lg"
+    (click)="toggle1()">
+
+    @if (!flip1()) {
+      <div>
+        <h3 class="text-center font-medium text-sky-700">CLICK ME</h3>
+
+      </div>
+    } @else {
+      <div>
+         <ul class="mt-3 list-disc list-inside text-gray-700 space-y-1">
+          <li>Lorem ipsum dolor sit amet</li>
+          <li>Consectetur adipiscing elit</li>
+          <li>Sed do eiusmod tempor incididunt</li>
+        </ul>
+      </div>
+    }
+  </div>
+
+  <!-- Card 2 -->
+  <div 
+    class="p-5 rounded-2xl border border-sky-100 bg-white shadow-sm cursor-pointer transition duration-300 hover:shadow-lg"
+    (click)="toggle2()">
+
+    @if (!flip2()) {
+      <div>
+        <h3 class="text-center font-medium text-sky-700">CLICK ME</h3>
+      </div>
+    } @else {
+      <div>
+        <p class="leading-7 text-gray-700">
+          TESTING
+        </p>
+      </div>
+    }
+  </div>
+</div>
+
+  </div>
+</section>
+
+<!-- SURPRISE REVEAL -->
+<section class="bg-white">
+  <div class="max-w-3xl mx-auto px-6 py-16 text-center">
+    <h2 class="text-2xl font-semibold text-sky-700">TEST </h2>
+    <p class="mt-2 text-gray-600">Click the gift to reveal.</p>
+
+    <button (click)="miniGameBtn()" class="mt-6 group relative inline-flex items-center justify-center overflow-hidden border border-sky-300 px-6 py-3 rounded-xl">
+      <span class="absolute inset-y-0 left-0 w-0 bg-sky-500 transition-all duration-300 ease-out group-hover:w-full"></span>
+      <span class="relative text-sm font-medium text-sky-700 group-hover:text-white">CLICK TEST</span>
+    </button>
+
+    @if (showGift()) {
+      <div class="mt-8 mx-auto max-w-xl p-6 rounded-2xl border border-sky-100 bg-sky-50/70 shadow-sm text-sky-800">
+        <p class="leading-7">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer blandit orci id elit rhoncus, et sollicitudin lacus placerat. Proin ac purus id libero dapibus tincidunt.
+        </p>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="relative bg-gradient-to-t from-sky-50 to-white">
+  <div class="max-w-2xl mx-auto px-6 py-20 text-center">
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-sky-700">
+      TEST 
+    </h2>
+    <p class="mt-4 text-gray-600">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ullamcorper, mi ac vulputate consequat, purus elit malesuada lacus, sit amet mattis justo felis nec risus.
+    </p>
+    <div class="mt-8 h-px bg-sky-100"></div>
+  </div>
+</section>

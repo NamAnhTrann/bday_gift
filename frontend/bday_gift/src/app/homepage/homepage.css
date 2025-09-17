@@ -1,0 +1,29 @@
+/* Keep to light blue + white. Soft floating balloons */
+.balloon {
+  position: absolute;
+  width: 70px; height: 90px;
+  border-radius: 50% 50% 45% 55%;
+  background: rgba(14, 165, 233, 0.12);            /* sky-500 @ ~12% */
+  border: 1px solid rgba(14, 165, 233, 0.25);      /* soft sky border */
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.15);
+  animation: floatUp 14s linear infinite;
+}
+.balloon::after {
+  content: '';
+  position: absolute;
+  bottom: -18px; left: 50%; transform: translateX(-50%);
+  width: 2px; height: 18px;
+  background: rgba(14, 165, 233, 0.25);
+  border-radius: 999px;
+}
+.balloon-a { left: 10%; bottom: -120px; animation-delay: 0s; }
+.balloon-b { left: 45%; bottom: -150px; animation-delay: 4s; width: 64px; height: 82px; }
+.balloon-c { left: 78%; bottom: -130px; animation-delay: 8s; width: 76px; height: 95px; }
+
+@keyframes floatUp {
+  0% { transform: translateY(0) translateX(0); opacity: 0.0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(-120vh) translateX(-10px); opacity: 0.2; }
+}
+
+
