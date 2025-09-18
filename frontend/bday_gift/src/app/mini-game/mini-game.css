@@ -1,5 +1,150 @@
-/* Ensure immediate pointer events on mobile (no scroll/zoom gestures interfering) */
-canvas {
-  cursor: crosshair;
-  touch-action: none;
+/* Frame (fullscreen) */
+.game-frame {
+  position: fixed;       /* cover whole screen */
+  inset: 0;              /* top:0; right:0; bottom:0; left:0 */
+  width: 100vw;
+  height: 100vh;
+  background: #f0f9ff;
+  border: none;          /* remove frame border */
+  border-radius: 0;      /* no rounding for fullscreen */
+  overflow: hidden;
+  box-shadow: none;      /* no drop shadow */
+}
+
+/* Canvas */
+.game-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
+/* Exit Button */
+.exit-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  background: #3b82f6;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background 0.2s;
+}
+.exit-btn:hover {
+  background: #2563eb;
+}
+
+/* HUD */
+.hud {
+  pointer-events: none;
+  position: absolute;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #075985;
+}
+.hud-item {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #bae6fd;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.4rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.hud-combo {
+  background: #38bdf8;
+  color: #fff;
+  border: 1px solid #0ea5e9;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.4rem;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Progress Bar */
+.progress-bar {
+  position: absolute;
+  margin-top: 25px;
+  top: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 8px;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #0ea5e9);
+  transition: width 0.1s linear;
+}
+
+/* Toasts */
+.toast-container {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.toast {
+  background: #0284c7;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: scale(0.7);
+  animation: pop 0.3s forwards, fadeOut 6s forwards;
+}
+@keyframes pop {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Tip */
+.tip {
+  pointer-events: none;
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.7rem;
+  color: #0369a1;
+  opacity: 0.8;
+}
+
+/* Canvas Shake Effect */
+.animate-shake {
+  animation: shake 0.4s;
+}
+@keyframes shake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-5px, 0); }
+  50% { transform: translate(5px, 0); }
+  75% { transform: translate(-5px, 0); }
+  100% { transform: translate(0, 0); }
 }

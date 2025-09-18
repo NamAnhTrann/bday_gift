@@ -1,29 +1,40 @@
-<section class="relative w-screen h-[100dvh] bg-sky-50 overflow-hidden">
-  <!-- Fullscreen canvas -->
-  <canvas #canvas class="absolute inset-0 w-full h-full"></canvas>
+<section class="game-frame">
+  <!-- Canvas -->
+  <canvas #canvas class="game-canvas"></canvas>
+
+  <!-- Exit -->
+  <a href="/" class="exit-btn">Exit</a>
 
   <!-- HUD -->
-  <div class="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 flex items-center gap-4 text-sm text-sky-800">
-    <div class="px-2 py-1 rounded bg-white/80 border border-sky-200 shadow-sm">
+  <div class="hud">
+    <div class="hud-item">
       Score: <span class="font-semibold">{{ score() }}</span>
     </div>
+    <div class="hud-item">
+      Level: <span class="font-semibold">{{ level() }}</span>
+    </div>
     @if (combo() > 1) {
-      <div class="px-2 py-1 rounded bg-sky-200/90 text-sky-900 border border-sky-300 shadow-sm">
+      <div class="hud-combo">
         Combo x{{ combo() }}
       </div>
     }
   </div>
 
-  <!-- Toast on pop -->
-  @if (toastVisible()) {
-    <div class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-6
-                px-3 py-2 rounded-lg bg-sky-600 text-white text-sm shadow">
-      {{ toastText() }}
-    </div>
-  }
+  <!-- Progress Bar -->
+  <div class="progress-bar">
+    <div class="progress-fill" [style.width.%]="progress()"></div>
+  </div>
 
-  <!-- Tiny tip -->
-  <div class="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 text-[11px] text-sky-700/70">
-    Pop quickly to build a combo. Golden balloons give extra sparkles ✨
+  <!-- Toast Messages -->
+  <div class="toast-container">
+    @for (t of toasts; track t.id) {
+      <div class="toast animate-pop">{{ t.text }}</div>
+    }
+  </div>
+
+  <!-- Tip -->
+  <div class="tip">
+    Pop quickly to build a combo. Golden balloons give extra sparkles ✨<br>
+    Watch out for bombs after Level 3!
   </div>
 </section>
