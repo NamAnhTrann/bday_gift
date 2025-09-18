@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 type Balloon = {
   id: number; x: number; y: number; r: number; vy: number;
@@ -10,7 +11,7 @@ type Toast = { id: number; text: string };
 @Component({
   selector: 'app-mini-game',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './mini-game.html',
   styleUrls: ['./mini-game.css']
 })
@@ -22,6 +23,11 @@ export class MiniGame implements OnInit, OnDestroy {
   combo = signal(0);
   level = signal(1);
   progress = signal(0);
+
+
+  showStartScreen = signal(true);
+  countdown = signal(0);
+  gameOver = signal(false);
 
   toasts: Toast[] = [];
   private toastId = 1;
@@ -35,10 +41,12 @@ export class MiniGame implements OnInit, OnDestroy {
 
   // timing
   private lastSpawn = 0;
-  private spawnEveryBase = 700;
+  private spawnEveryBase = 500;
   private spawnEvery = this.spawnEveryBase;
   private lastPopTime = 0;
   private dpr = 1;
+  comboTimer = signal(0);
+  private comboDuration = 1000;
 
   // level + difficulty
   private speedMultiplier = 1;
@@ -55,25 +63,49 @@ export class MiniGame implements OnInit, OnDestroy {
   ];
   private goldenMessages = ['Golden moment', 'Lucky pop!', 'Make a wish', 'Extra sparkle!'];
 
-  ngOnInit(): void {
-    const canvas = this.canvasRef.nativeElement;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    this.ctx = ctx;
+ngOnInit(): void {
+  const canvas = this.canvasRef.nativeElement;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  this.ctx = ctx;
 
-    this.resize();
-    window.addEventListener('resize', this.resize, { passive: true });
-    canvas.addEventListener('pointerdown', this.onPointerDown, { passive: true });
+  this.resize();
+  window.addEventListener('resize', this.resize, { passive: true });
+  canvas.addEventListener('pointerdown', this.onPointerDown, { passive: true });
+}
 
-    // spawn initial balloons
-    const now = performance.now();
-    for (let i = 0; i < 6; i++) this.spawnBalloon(now + i * this.spawnEvery, true);
+startGame() {
+  this.showStartScreen.set(false);
+  this.gameOver.set(false);
 
-    // start first level
-    this.startLevel(now);
+  // countdown 3..2..1
+  let count = 3;
+  this.countdown.set(count);
+  const timer = setInterval(() => {
+    count--;
+    if (count > 0) {
+      this.countdown.set(count);
+    } else {
+      clearInterval(timer);
+      this.countdown.set(0);
 
-    this.loop(now);
-  }
+      // reset state
+      this.balloons = [];
+      this.confetti = [];
+      this.score.set(0);
+      this.combo.set(0);
+      this.level.set(1);
+      this.lastSpawn = 0;
+
+      const now = performance.now();
+      for (let i = 0; i < 6; i++) this.spawnBalloon(now + i * this.spawnEvery, true);
+      this.startLevel(now);
+
+      this.loop(now);
+    }
+  }, 1000);
+}
+
 
   ngOnDestroy(): void {
     cancelAnimationFrame(this.raf);
@@ -108,26 +140,19 @@ export class MiniGame implements OnInit, OnDestroy {
     this.startLevel(now);
   }
 
-  private resetGame(reason: 'miss' | 'escape' | 'manual' = 'miss') {
-    this.balloons = [];
-    this.confetti = [];
-    this.score.set(0);
-    this.combo.set(0);
-    this.lastSpawn = 0;
-    this.level.set(1);
+private resetGame(reason: 'miss' | 'escape' | 'manual' = 'miss') {
+  cancelAnimationFrame(this.raf);
+  this.gameOver.set(true);  // show game over screen
+  this.showToast("Game Over!", 3000);
+}
 
-    const now = performance.now();
-    for (let i = 0; i < 5; i++) this.spawnBalloon(now + i * this.spawnEvery, true);
+// Called when user clicks Game Over screen
+backToStart() {
+  this.gameOver.set(false);
+  this.showStartScreen.set(true);
+}
 
-    this.startLevel(now);
 
-    if (reason === 'miss') {
-      this.showToast("You missed, try again!", 4000);
-    }
-    if (reason === 'escape') {
-      this.showToast("🎈 A balloon escaped! Try again!", 4000);
-    }
-  }
 
   // ---------- input ----------
   private onPointerDown = (e: PointerEvent) => {
@@ -166,12 +191,13 @@ export class MiniGame implements OnInit, OnDestroy {
 
   private updateCombo() {
     const now = performance.now();
-    if (now - this.lastPopTime < 900) {
+    if (now - this.lastPopTime < this.comboDuration) {
       this.combo.update(v => v + 1);
     } else {
       this.combo.set(1);
     }
     this.lastPopTime = now;
+    this.comboTimer.set(100); // full timer
   }
 
   private shakeCanvas() {
@@ -193,33 +219,45 @@ export class MiniGame implements OnInit, OnDestroy {
       this.nextLevel(t);
     }
 
+    // update combo timer
+    if (this.combo() > 1) {
+      const elapsedCombo = t - this.lastPopTime;
+      const pct = Math.max(0, 100 - (elapsedCombo / this.comboDuration) * 100);
+      this.comboTimer.set(pct);
+      if (pct <= 0) this.combo.set(0);
+    }
+
     this.draw();
   };
 
+
   // ---------- balloons ----------
-  private spawnBalloon(now: number, initial = false) {
-    if (!initial && now - this.lastSpawn < this.spawnEvery) return;
-    this.lastSpawn = now;
+private spawnBalloon(now: number, initial = false) {
+  if (!initial && now - this.lastSpawn < this.spawnEvery) return;
+  this.lastSpawn = now;
 
-    const canvas = this.canvasRef.nativeElement;
-    const W = canvas.width / this.dpr;
-    const H = canvas.height / this.dpr;
+  const canvas = this.canvasRef.nativeElement;
+  const W = canvas.width / this.dpr;
+  const H = canvas.height / this.dpr;
 
-    const golden = Math.random() < 0.08;
-    const bomb = this.level() >= 3 && Math.random() < 0.15;
+  const golden = Math.random() < 0.08;
+  const bomb = this.level() >= 3 && Math.random() < 0.15;
 
-    const r = bomb ? 24 : (golden ? 28 + Math.random() * 6 : 20 + Math.random() * 8);
-    const x = 40 + Math.random() * (W - 80);
-    const y = initial ? (H * 0.3 + Math.random() * (H * 0.7)) : (H + r + Math.random() * 40);
-    const vy = -(0.6 + Math.random() * 0.8);
+  const r = bomb ? 24 : (golden ? 28 + Math.random() * 6 : 20 + Math.random() * 8);
+  const x = 40 + Math.random() * (W - 80);
 
-    let color: string;
-    if (bomb) color = '#1f2937';
-    else if (golden) color = this.pick(['#fbbf24', '#fde68a']);
-    else color = this.pick(['#38bdf8', '#0ea5e9', '#7dd3fc']);
+  // Always start balloons just below the bottom
+  const y = H + r + Math.random() * 40;
+  const vy = -(0.8 + Math.random() * 0.9);
 
-    this.balloons.push({ id: this.nextId++, x, y, r, vy, color, golden, bomb });
-  }
+  let color: string;
+  if (bomb) color = '#1f2937';
+  else if (golden) color = this.pick(['#fbbf24', '#fde68a']);
+  else color = this.pick(['#38bdf8', '#0ea5e9', '#7dd3fc']);
+
+  this.balloons.push({ id: this.nextId++, x, y, r, vy, color, golden, bomb });
+}
+
 
   private update() {
     const canvas = this.canvasRef.nativeElement;

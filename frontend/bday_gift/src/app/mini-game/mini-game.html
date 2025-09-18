@@ -3,7 +3,7 @@
   <canvas #canvas class="game-canvas"></canvas>
 
   <!-- Exit -->
-  <a href="/" class="exit-btn">Exit</a>
+  <a routerLink="/" class="exit-btn">Exit</a>
 
   <!-- HUD -->
   <div class="hud">
@@ -16,6 +16,9 @@
     @if (combo() > 1) {
       <div class="hud-combo">
         Combo x{{ combo() }}
+        <div class="combo-bar">
+          <div class="combo-fill" [style.width.%]="comboTimer()"></div>
+        </div>
       </div>
     }
   </div>
@@ -34,7 +37,33 @@
 
   <!-- Tip -->
   <div class="tip">
-    Pop quickly to build a combo. Golden balloons give extra sparkles ✨<br>
-    Watch out for bombs after Level 3!
+    POP THE BALLOONS<br>
+    Watch out for bombs after Level 3
   </div>
+
+  <!-- Start Screen -->
+  @if (showStartScreen()) {
+    <div class="overlay">
+      <button class="start-btn" (click)="startGame()">Start Now!</button>
+    </div>
+  }
+
+  <!-- Countdown -->
+  @if (countdown() > 0) {
+    <div class="overlay">
+      <div class="countdown">{{ countdown() }}</div>
+    </div>
+  }
+
+<!-- Game Over -->
+@if (gameOver()) {
+  <div class="overlay" (click)="backToStart()">
+    <div class="game-over">
+      Game Over<br>
+      <span class="text-sm">Final Score: {{ score() }}</span><br>
+      <span class="text-sm">Click Anywhere to play again</span>
+    </div>
+  </div>
+}
+
 </section>

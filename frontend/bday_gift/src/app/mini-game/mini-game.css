@@ -91,25 +91,26 @@
 /* Toasts */
 .toast-container {
   position: absolute;
-  bottom: 3rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  bottom: 1rem;
+  right: 1rem;
+  transform: none; /* remove translateX */
+  align-items: flex-end;
   pointer-events: none;
 }
+
 .toast {
+     pointer-events: none;
   background: #0284c7;
   color: white;
-  font-weight: 700;
-  font-size: 1rem;
-  padding: 0.6rem 1rem;
+font-weight: 500;   
+font-size: 0.8rem;
+   padding: 0.4rem 0.8rem;
   border-radius: 0.75rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   opacity: 0;
   transform: scale(0.7);
   animation: pop 0.3s forwards, fadeOut 6s forwards;
+  max-width: 220px; 
 }
 @keyframes pop {
   to {
@@ -147,4 +148,83 @@
   50% { transform: translate(5px, 0); }
   75% { transform: translate(-5px, 0); }
   100% { transform: translate(0, 0); }
+}
+.hud-combo {
+  margin-top: 4px;
+  font-size: 1.2rem;
+  text-align: center;
+  color: #fbbf24; /* yellowish highlight */
+}
+
+.combo-bar {
+  margin-top: 2px;
+  width: 80px;
+  height: 6px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 3px;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.combo-fill {
+  height: 100%;
+  background: linear-gradient(to right, #fbbf24, #f59e0b);
+  transition: width 0.1s linear;
+}
+
+/* Overlay base (for start, countdown, game over) */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6); /* dark transparent overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  flex-direction: column;
+}
+
+/* Start button */
+.start-btn {
+  background: #38bdf8;
+  color: white;
+  font-size: 1.5rem;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.start-btn:hover {
+  background: #0ea5e9;
+}
+
+/* Countdown numbers */
+.countdown {
+  font-size: 5rem;
+  font-weight: 800;
+  animation: countdownPop 1s ease forwards;
+}
+
+@keyframes countdownPop {
+  0%   { transform: scale(0.5); opacity: 0; }
+  50%  { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Game over text */
+.game-over {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #f87171; /* red highlight */
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+.game-over .text-sm {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fef3c7; /* yellowish hint */
 }
